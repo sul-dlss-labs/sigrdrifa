@@ -1,7 +1,7 @@
 PATH
   remote: /home/mjg/workspace/valkyrie-sdr
   specs:
-    valkyrie-sdr (0.1.0)
+    valkyrie-sdr (0.0.1)
       valkyrie (~> 1.0)
 
 GEM
