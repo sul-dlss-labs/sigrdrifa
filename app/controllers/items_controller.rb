@@ -1,9 +1,12 @@
 class ItemsController < ApplicationController
-  before_action :find_item, only: [:show, :edit, :update, :destroy]
+  before_action :find_item, only: [:show, :update, :destroy]
+  before_action :find_item_change_set, only: [:edit]
+
+  delegate :persister, :query_service, to: :metadata_adapter
 
   # GET /items
   def index
-    @items = Item.all
+    @items = query_service.find_all_of_model(model: Item)
   end
 
   # GET /items/1
@@ -12,7 +15,7 @@ class ItemsController < ApplicationController
 
   # GET /items/new
   def new
-    @item = Item.new
+    @item = ItemChangeSet.new(Item.new)
   end
 
   # GET /items/1/edit
@@ -21,9 +24,9 @@ class ItemsController < ApplicationController
 
   # POST /items
   def create
-    @item = Item.new(item_params)
+    @item = change_set_for(resource: Item.new(item_params))
 
-    if @item.save
+    if change_set_persister.save(change_set: @item)
       redirect_to @item, notice: 'Item was successfully created.'
     else
       render :new
@@ -32,7 +35,9 @@ class ItemsController < ApplicationController
 
   # PATCH/PUT /items/1
   def update
-    if @item.update(item_params)
+    @item = change_set_for(resource: @item)
+
+    if change_set_persister.save(change_set: @item)
       redirect_to @item, notice: 'Item was successfully updated.'
     else
       render :edit
@@ -41,23 +46,38 @@ class ItemsController < ApplicationController
 
   # DELETE /items/1
   def destroy
-    @item.destroy
+    persister.delete(resource: @item)
     redirect_to items_url, notice: 'Item was successfully destroyed.'
   end
 
   private
 
-    # Use callbacks to share common setup or constraints between actions.
-    def find_item
-      @item = Item.find(params[:id])
-    end
+  def change_set_for(resource:)
+    change_set = ItemChangeSet.new(resource)
+    change_set.validate(item_params)
+    change_set.sync
+    change_set
+  end
 
-    # Only allow a trusted parameter "white list" through.
-    def item_params
-      params.require(:item).permit(:title)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def find_item
+    @item = query_service.find_by(id: params[:id])
+  end
 
-    def metadata_adapter
-      Valkyrie.config.metadata_adapter
-    end
+  def find_item_change_set
+    @item = ItemChangeSet.new(find_item)
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def item_params
+    params.require(:item).permit(:title)
+  end
+
+  def metadata_adapter
+    Valkyrie.config.metadata_adapter
+  end
+
+  def change_set_persister
+    ChangeSetPersister.new(metadata_adapter: metadata_adapter)
+  end
 end

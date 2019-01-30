@@ -5,8 +5,11 @@ ruby '2.5.3'
 
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'puma', '~> 3.11'
+gem 'jquery-rails'
 gem 'rails', '~> 5.2.2'
+gem 'sass-rails'
 gem 'sqlite3'
+gem 'uglifier'
 gem 'valkyrie'
 gem 'valkyrie-sdr', path: '/home/mjg/workspace/valkyrie-sdr'
 
