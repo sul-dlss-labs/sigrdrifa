@@ -1,3 +1,9 @@
+PATH
+  remote: /home/mjg/workspace/valkyrie-sdr
+  specs:
+    valkyrie-sdr (0.1.0)
+      valkyrie (~> 1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -275,6 +281,7 @@ DEPENDENCIES
   rails (~> 5.2.2)
   sqlite3
   valkyrie
+  valkyrie-sdr!
   web-console (>= 3.3.0)
 
 RUBY VERSION
