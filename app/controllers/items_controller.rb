@@ -6,7 +6,11 @@ class ItemsController < ApplicationController
 
   # GET /items
   def index
-    @items = query_service.find_all_of_model(model: Item)
+    # TODO: Get items beyond first page
+    @items = query_service.find_all_of_model(model: Item).map do |hash|
+      puts "reifying an item with #{hash.symbolize_keys}"
+      Item.new(hash.symbolize_keys)
+    end
   end
 
   # GET /items/1
@@ -61,7 +65,7 @@ class ItemsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def find_item
-    @item = query_service.find_by(id: params[:id])
+    @item = Item.new(query_service.find_by(id: params[:id]).symbolize_keys)
   end
 
   def find_item_change_set
@@ -70,7 +74,7 @@ class ItemsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def item_params
-    params.require(:item).permit(:title)
+    params.require(:item).permit(:label)
   end
 
   def metadata_adapter

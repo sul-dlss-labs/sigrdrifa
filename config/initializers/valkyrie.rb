@@ -1,7 +1,7 @@
 Rails.application.config.to_prepare do
   Valkyrie::MetadataAdapter.register(
-    Valkyrie::Persistence::Memory::MetadataAdapter.new,
-    :memory
+    Valkyrie::Persistence::SDR::MetadataAdapter.new,
+    :sdr
   )
 
   Valkyrie::StorageAdapter.register(

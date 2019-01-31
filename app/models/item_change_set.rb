@@ -1,4 +1,4 @@
 class ItemChangeSet < Valkyrie::ChangeSet
-  self.fields = [:title]
-  validates :title, presence: true
+  self.fields = [:label]
+  validates :label, presence: true
 end
